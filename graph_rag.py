@@ -51,10 +51,10 @@ def _(answer, mo, query):
     return
 
 
-app._unparsable_cell(
-    r"""
-    \"class PruneSchema(dspy.Signature):
-        \"\"\"
+@app.cell
+def _(GraphSchema, Query, dspy):
+    class PruneSchema(dspy.Signature):
+        """
         Understand the given labelled property graph schema and the given user question. Your task
         is to return ONLY the subset of the schema (node labels, edge labels and properties) that is
         relevant to the question.
@@ -62,7 +62,7 @@ app._unparsable_cell(
             - The nodes are the entities in the graph.
             - The edges are the relationships between the nodes.
             - Properties of nodes and edges are their attributes, which helps answer the question.
-        \"\"\"
+        """
 
         question: str = dspy.InputField()
         input_schema: str = dspy.InputField()
@@ -70,7 +70,7 @@ app._unparsable_cell(
 
 
     class Text2Cypher(dspy.Signature):
-        \"\"\"
+        """
         Translate the question into a valid Cypher query that respects the graph schema.
 
         <SYNTAX>
@@ -91,7 +91,7 @@ app._unparsable_cell(
         - Do not attempt to coerce data types to number formats (e.g., integer, float) in your results.
         - NO Cypher keywords should be returned by your query.
         </RETURN_RESULTS>
-        \"\"\"
+        """
 
         question: str = dspy.InputField()
         input_schema: str = dspy.InputField()
@@ -99,19 +99,17 @@ app._unparsable_cell(
 
 
     class AnswerQuestion(dspy.Signature):
-        \"\"\"
+        """
         - Use the provided question, the generated Cypher query and the context to answer the question.
         - If the context is empty, state that you don't have enough information to answer the question.
         - When dealing with dates, mention the month in full.
-        \"\"\"
+        """
 
         question: str = dspy.InputField()
         cypher_query: str = dspy.InputField()
         context: str = dspy.InputField()
         response: str = dspy.OutputField()
-    """,
-    name="_"
-)
+    return AnswerQuestion, PruneSchema, Text2Cypher
 
 
 @app.cell
@@ -197,7 +195,7 @@ def _(BaseModel, Field):
     class GraphSchema(BaseModel):
         nodes: list[Node]
         edges: list[Edge]
-    return (Query,)
+    return GraphSchema, Query
 
 
 @app.cell

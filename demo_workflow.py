@@ -122,6 +122,7 @@ def _(dspy, load_dotenv, os):
     OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 
     # Using OpenRouter. Switch to another LLM provider as needed
+    # we recommend gemini-2.0-flash for the cost-efficiency
     lm = dspy.LM(
         model="openrouter/google/gemini-2.0-flash-001",
         api_base="https://openrouter.ai/api/v1",
@@ -414,6 +415,11 @@ def _():
     from pydantic import BaseModel, Field
     from dotenv import load_dotenv
     return BaseModel, Field, dspy, kuzu, load_dotenv, mo, os
+
+
+@app.cell
+def _():
+    return
 
 
 if __name__ == "__main__":
