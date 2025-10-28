@@ -1,0 +1,702 @@
+
+Answer:
+   Here are some Nobel laureates: Aaron Klug, Ahmed Zewail, Alfred D. Hershey, Alfred Werner, Amartya Sen, Andre Geim, Arno Penzias, Arthur Harden, Arvid Carlsson, Ben R. Mottelson, Bertram N. Brockhouse...
+
+Cache Statistics AFTER storing:
+   • Hits: 10 | Misses: 10 | Hit Rate: 50.0%
+   • Cache Size: 10/100
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: physics prizes
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 10 entries, 10 hits, 10 misses
+----------------------------------------------------------------------
+Cache key for this query: fdba13b47c313be8d6643343db61774c...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', '56d4319f32ae57eb29e6ad28db47afb4...', 'd56f0cd47b940b96dfa3a12973413649...', '963592a7326629a6d462d3a4fb926f23...']
+
+CACHE MISS (lookup: 0.10ms)
+   Key fdba13b47c313be8d6643343db61774c... NOT found in cache
+   Executing full pipeline...
+
+Result stored in cache with key: fdba13b47c313be8d6643343db61774c...
+
+Pipeline completed in 23993ms
+
+Cypher Query:
+   MATCH (a1:Prize) WHERE toLower(a1.category) CONTAINS 'physics' RETURN a1.category
+
+Answer:
+   physics
+
+Cache Statistics AFTER storing:
+   • Hits: 10 | Misses: 11 | Hit Rate: 47.6%
+   • Cache Size: 11/100
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many people won prizes?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 11 entries, 10 hits, 11 misses
+----------------------------------------------------------------------
+Cache key for this query: 6a24c05c10a9620eed0e3a57e30feb56...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', '56d4319f32ae57eb29e6ad28db47afb4...', 'd56f0cd47b940b96dfa3a12973413649...', '963592a7326629a6d462d3a4fb926f23...']
+
+CACHE MISS (lookup: 0.06ms)
+   Key 6a24c05c10a9620eed0e3a57e30feb56... NOT found in cache
+   Executing full pipeline...
+
+Result stored in cache with key: 6a24c05c10a9620eed0e3a57e30feb56...
+
+Pipeline completed in 7933ms
+
+Cypher Query:
+   MATCH (s1:Scholar)-[r1:WON]->(p1:Prize) RETURN count(DISTINCT s1)
+
+Answer:
+   726 people won prizes.
+
+Cache Statistics AFTER storing:
+   • Hits: 10 | Misses: 12 | Hit Rate: 45.5%
+   • Cache Size: 12/100
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many Chemistry prizes were awarded to scholars affiliated with MIT?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 12 entries, 10 hits, 12 misses
+----------------------------------------------------------------------
+Cache key for this query: d56f0cd47b940b96dfa3a12973413649...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', '56d4319f32ae57eb29e6ad28db47afb4...', 'd56f0cd47b940b96dfa3a12973413649...', '963592a7326629a6d462d3a4fb926f23...']
+
+CACHE HIT! (lookup: 0.13ms)
+   Retrieved from cache key: d56f0cd47b940b96dfa3a12973413649...
+
+Cypher Query:
+   MATCH (i1:Institution) WHERE toLower(i1.name) CONTAINS toLower('MIT') MATCH (s1:Scholar)-[r1:AFFILIATED_WITH]->(i1) MATCH (s1)-[r2:WON]->(p1:Prize) WHERE toLower(p1.category) CONTAINS toLower('Chemistry') RETURN count(p1)
+
+Answer:
+   Two Chemistry prizes were awarded to scholars affiliated with MIT.
+
+Cache Statistics:
+   • Hits: 11 | Misses: 12 | Hit Rate: 47.8%
+   • Cache Size: 12/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: Which scholars won multiple prizes?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 12 entries, 11 hits, 12 misses
+----------------------------------------------------------------------
+Cache key for this query: 963592a7326629a6d462d3a4fb926f23...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', '56d4319f32ae57eb29e6ad28db47afb4...', '963592a7326629a6d462d3a4fb926f23...', 'f7d080267d94f83c244a3c11116996ee...']
+
+CACHE HIT! (lookup: 0.13ms)
+   Retrieved from cache key: 963592a7326629a6d462d3a4fb926f23...
+
+Cypher Query:
+   MATCH (s:Scholar)-[:WON]->(p:Prize) WITH s, count(p) AS numPrizes WHERE numPrizes > 1 RETURN s.fullName
+
+Answer:
+   The scholars who have won multiple prizes are: Linus Carl Pauling, K. Barry Sharpless, John Bardeen, Frederick Sanger, and Marie Curie, née Skłodowska.
+
+Cache Statistics:
+   • Hits: 12 | Misses: 12 | Hit Rate: 50.0%
+   • Cache Size: 12/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: List all scholars affiliated with institutions in the United States
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 12 entries, 12 hits, 12 misses
+----------------------------------------------------------------------
+Cache key for this query: 56d4319f32ae57eb29e6ad28db47afb4...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', '56d4319f32ae57eb29e6ad28db47afb4...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...']
+
+CACHE HIT! (lookup: 0.18ms)
+   Retrieved from cache key: 56d4319f32ae57eb29e6ad28db47afb4...
+
+Cypher Query:
+   MATCH (c1:Country) WHERE toLower(c1.name) CONTAINS toLower('United States') MATCH (i1:Institution)-[:IS_LOCATED_IN]->(ci1:City)-[:IS_CITY_IN]->(c1) MATCH (s1:Scholar)-[:AFFILIATED_WITH]->(i1) RETURN s1.fullName
+
+Answer:
+   I do not have enough information to answer this question.
+
+Cache Statistics:
+   • Hits: 13 | Misses: 12 | Hit Rate: 52.0%
+   • Cache Size: 12/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: Which prizes have been won by scholars born in France?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 12 entries, 13 hits, 12 misses
+----------------------------------------------------------------------
+Cache key for this query: 938ec004921799301b144a6014492046...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...']
+
+CACHE MISS (lookup: 0.09ms)
+   Key 938ec004921799301b144a6014492046... NOT found in cache
+   Executing full pipeline...
+
+Result stored in cache with key: 938ec004921799301b144a6014492046...
+
+Pipeline completed in 7416ms
+
+Cypher Query:
+   MATCH (c1:Country {name: 'France'})<-[:IS_CITY_IN]-(c2:City)<-[:BORN_IN]-(s:Scholar)-[:WON]->(p:Prize) RETURN p.prize_id
+
+Answer:
+   The prizes won by scholars born in France are: 2019 economics, 1907 medicine, 1956 medicine, 1965 medicine, 1965 medicine, 1980 medicine, 2016 chemistry, 1913 medicine, 2008 medicine, 1935 chemistry, ...
+
+Cache Statistics AFTER storing:
+   • Hits: 13 | Misses: 13 | Hit Rate: 50.0%
+   • Cache Size: 13/100
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: What prizes were awarded in 2020?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 13 hits, 13 misses
+----------------------------------------------------------------------
+Cache key for this query: 60c5abd0d3696caa88078a4e33959b62...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...']
+
+CACHE MISS (lookup: 0.31ms)
+   Key 60c5abd0d3696caa88078a4e33959b62... NOT found in cache
+   Executing full pipeline...
+⚠ Query validation failed: Binder exception: Cannot find property name for p1.
+Error running query: Binder exception: Cannot find property name for p1.
+
+Query returned empty results
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many institutions are there?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 13 hits, 14 misses
+----------------------------------------------------------------------
+Cache key for this query: 3066fd7efe150ba9e4131a292f42f1d0...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...']
+
+CACHE HIT! (lookup: 0.11ms)
+   Retrieved from cache key: 3066fd7efe150ba9e4131a292f42f1d0...
+
+Cypher Query:
+   MATCH (n:Institution) RETURN count(n)
+
+Answer:
+   There are 344 institutions.
+
+Cache Statistics:
+   • Hits: 14 | Misses: 14 | Hit Rate: 50.0%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: What prizes were awarded in the year 2020?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 14 hits, 14 misses
+----------------------------------------------------------------------
+Cache key for this query: 0152dd8098fd75048f15c48fd4b1bce2...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...']
+
+CACHE MISS (lookup: 0.20ms)
+   Key 0152dd8098fd75048f15c48fd4b1bce2... NOT found in cache
+   Executing full pipeline...
+⚠ Query validation failed: Binder exception: Cannot find property name for p1.
+Error running query: Binder exception: Cannot find property name for p1.
+
+Query returned empty results
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: What prizes were awarded in the award year 2020?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 14 hits, 15 misses
+----------------------------------------------------------------------
+Cache key for this query: 46efeb97a57465749e3bfb877723ff4d...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...']
+
+CACHE MISS (lookup: 0.13ms)
+   Key 46efeb97a57465749e3bfb877723ff4d... NOT found in cache
+   Executing full pipeline...
+⚠ Query validation failed: Binder exception: Cannot find property name for p1.
+Error running query: Binder exception: Cannot find property name for p1.
+
+Query returned empty results
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: What prizes were awarded in the awardyear 2020?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 14 hits, 16 misses
+----------------------------------------------------------------------
+Cache key for this query: 4e8180f10d5efdea9cf928b54bdda2a9...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...']
+
+
+
+[E 251028 11:32:07 ops:299] (error_id=98b43982-8bd6-46a4-bb2c-d9543601bdd0) An ancestor raised an exception (RateLimitError): 
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: 
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 14 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 5bbbcbce5370a0a8daabe594ccc505f5...
+Keys currently in cache: ['5bbbcbce5370a0a8daabe594ccc505f5...', '37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...']
+
+CACHE HIT! (lookup: 0.15ms)
+   Retrieved from cache key: 5bbbcbce5370a0a8daabe594ccc505f5...
+
+Cypher Query:
+   MATCH (a1:Scholar) RETURN a1.knownName
+
+Answer:
+   Aaron Klug, Ahmed Zewail, Alfred D. Hershey, Alfred Werner, Amartya Sen, Andre Geim, Arno Penzias, Arthur Harden, Arvid Carlsson, Ben R. Mottelson, Bertram N. Brockhouse, C.T.R. Wilson, Charles Nicoll...
+
+Cache Statistics:
+   • Hits: 15 | Misses: 17 | Hit Rate: 46.9%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many institutions are there?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 15 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 3066fd7efe150ba9e4131a292f42f1d0...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '89dac5b523d4b5f963820448f0a199c7...']
+
+CACHE HIT! (lookup: 0.21ms)
+   Retrieved from cache key: 3066fd7efe150ba9e4131a292f42f1d0...
+
+Cypher Query:
+   MATCH (n:Institution) RETURN count(n)
+
+Answer:
+   There are 344 institutions.
+
+Cache Statistics:
+   • Hits: 16 | Misses: 17 | Hit Rate: 48.5%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: Which prizes have been won by scholars born in France?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 16 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 938ec004921799301b144a6014492046...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '89dac5b523d4b5f963820448f0a199c7...']
+
+CACHE HIT! (lookup: 0.07ms)
+   Retrieved from cache key: 938ec004921799301b144a6014492046...
+
+Cypher Query:
+   MATCH (c1:Country {name: 'France'})<-[:IS_CITY_IN]-(c2:City)<-[:BORN_IN]-(s:Scholar)-[:WON]->(p:Prize) RETURN p.prize_id
+
+Answer:
+   The prizes won by scholars born in France are: 2019 economics, 1907 medicine, 1956 medicine, 1965 medicine, 1965 medicine, 1980 medicine, 2016 chemistry, 1913 medicine, 2008 medicine, 1935 chemistry, ...
+
+Cache Statistics:
+   • Hits: 17 | Misses: 17 | Hit Rate: 50.0%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: List all scholars affiliated with institutions in the United States
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 17 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 56d4319f32ae57eb29e6ad28db47afb4...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '89dac5b523d4b5f963820448f0a199c7...']
+
+CACHE HIT! (lookup: 0.04ms)
+   Retrieved from cache key: 56d4319f32ae57eb29e6ad28db47afb4...
+
+Cypher Query:
+   MATCH (c1:Country) WHERE toLower(c1.name) CONTAINS toLower('United States') MATCH (i1:Institution)-[:IS_LOCATED_IN]->(ci1:City)-[:IS_CITY_IN]->(c1) MATCH (s1:Scholar)-[:AFFILIATED_WITH]->(i1) RETURN s1.fullName
+
+Answer:
+   I do not have enough information to answer this question.
+
+Cache Statistics:
+   • Hits: 18 | Misses: 17 | Hit Rate: 51.4%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many Chemistry prizes were awarded to scholars affiliated with MIT?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 18 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: d56f0cd47b940b96dfa3a12973413649...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '89dac5b523d4b5f963820448f0a199c7...']
+
+CACHE HIT! (lookup: 0.13ms)
+   Retrieved from cache key: d56f0cd47b940b96dfa3a12973413649...
+
+Cypher Query:
+   MATCH (i1:Institution) WHERE toLower(i1.name) CONTAINS toLower('MIT') MATCH (s1:Scholar)-[r1:AFFILIATED_WITH]->(i1) MATCH (s1)-[r2:WON]->(p1:Prize) WHERE toLower(p1.category) CONTAINS toLower('Chemistry') RETURN count(p1)
+
+Answer:
+   Two Chemistry prizes were awarded to scholars affiliated with MIT.
+
+Cache Statistics:
+   • Hits: 19 | Misses: 17 | Hit Rate: 52.8%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: Which scholars won multiple prizes?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 19 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 963592a7326629a6d462d3a4fb926f23...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '89dac5b523d4b5f963820448f0a199c7...']
+
+CACHE HIT! (lookup: 0.05ms)
+   Retrieved from cache key: 963592a7326629a6d462d3a4fb926f23...
+
+Cypher Query:
+   MATCH (s:Scholar)-[:WON]->(p:Prize) WITH s, count(p) AS numPrizes WHERE numPrizes > 1 RETURN s.fullName
+
+Answer:
+   The scholars who have won multiple prizes are: Linus Carl Pauling, K. Barry Sharpless, John Bardeen, Frederick Sanger, and Marie Curie, née Skłodowska.
+
+Cache Statistics:
+   • Hits: 20 | Misses: 17 | Hit Rate: 54.1%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: physics prizes
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 20 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: fdba13b47c313be8d6643343db61774c...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '89dac5b523d4b5f963820448f0a199c7...']
+
+CACHE HIT! (lookup: 0.05ms)
+   Retrieved from cache key: fdba13b47c313be8d6643343db61774c...
+
+Cypher Query:
+   MATCH (a1:Prize) WHERE toLower(a1.category) CONTAINS 'physics' RETURN a1.category
+
+Answer:
+   physics
+
+Cache Statistics:
+   • Hits: 21 | Misses: 17 | Hit Rate: 55.3%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: Tell me about Nobel laureates
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 21 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 89dac5b523d4b5f963820448f0a199c7...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '89dac5b523d4b5f963820448f0a199c7...']
+
+CACHE HIT! (lookup: 0.04ms)
+   Retrieved from cache key: 89dac5b523d4b5f963820448f0a199c7...
+
+Cypher Query:
+   MATCH (s:Scholar)-[w:WON]->(p:Prize) RETURN s.knownName
+
+Answer:
+   Here are some Nobel laureates: Aaron Klug, Ahmed Zewail, Alfred D. Hershey, Alfred Werner, Amartya Sen, Andre Geim, Arno Penzias, Arthur Harden, Arvid Carlsson, Ben R. Mottelson, Bertram N. Brockhouse...
+
+Cache Statistics:
+   • Hits: 22 | Misses: 17 | Hit Rate: 56.4%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many institutions are there?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 22 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 3066fd7efe150ba9e4131a292f42f1d0...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '6a24c05c10a9620eed0e3a57e30feb56...']
+
+CACHE HIT! (lookup: 0.08ms)
+   Retrieved from cache key: 3066fd7efe150ba9e4131a292f42f1d0...
+
+Cypher Query:
+   MATCH (n:Institution) RETURN count(n)
+
+Answer:
+   There are 344 institutions.
+
+Cache Statistics:
+   • Hits: 23 | Misses: 17 | Hit Rate: 57.5%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: List all prizes in Chemistry
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 23 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 55fc3b4c6b193f01543085547a2d9bfc...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '55fc3b4c6b193f01543085547a2d9bfc...', '693cf268f4362d58addddf862ee323a6...', '6a24c05c10a9620eed0e3a57e30feb56...']
+
+CACHE HIT! (lookup: 0.05ms)
+   Retrieved from cache key: 55fc3b4c6b193f01543085547a2d9bfc...
+
+Cypher Query:
+   MATCH (p1:Prize) WHERE toLower(p1.category) CONTAINS toLower("Chemistry") RETURN p1.category
+
+Answer:
+   Chemistry
+
+Cache Statistics:
+   • Hits: 24 | Misses: 17 | Hit Rate: 58.5%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many laureates are there?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 24 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: f7d080267d94f83c244a3c11116996ee...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', 'f7d080267d94f83c244a3c11116996ee...', '693cf268f4362d58addddf862ee323a6...', '6a24c05c10a9620eed0e3a57e30feb56...', '5bbbcbce5370a0a8daabe594ccc505f5...']
+
+CACHE HIT! (lookup: 0.05ms)
+   Retrieved from cache key: f7d080267d94f83c244a3c11116996ee...
+
+Cypher Query:
+   MATCH (n:Scholar) RETURN count(n)
+
+Answer:
+   There are 726 laureates.
+
+Cache Statistics:
+   • Hits: 25 | Misses: 17 | Hit Rate: 59.5%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: How many Chemistry prizes were awarded to scholars affiliated with MIT?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 25 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: d56f0cd47b940b96dfa3a12973413649...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', '693cf268f4362d58addddf862ee323a6...', '6a24c05c10a9620eed0e3a57e30feb56...', '5bbbcbce5370a0a8daabe594ccc505f5...', '938ec004921799301b144a6014492046...']
+
+CACHE HIT! (lookup: 0.08ms)
+   Retrieved from cache key: d56f0cd47b940b96dfa3a12973413649...
+
+Cypher Query:
+   MATCH (i1:Institution) WHERE toLower(i1.name) CONTAINS toLower('MIT') MATCH (s1:Scholar)-[r1:AFFILIATED_WITH]->(i1) MATCH (s1)-[r2:WON]->(p1:Prize) WHERE toLower(p1.category) CONTAINS toLower('Chemistry') RETURN count(p1)
+
+Answer:
+   Two Chemistry prizes were awarded to scholars affiliated with MIT.
+
+Cache Statistics:
+   • Hits: 26 | Misses: 17 | Hit Rate: 60.5%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: List all scholars affiliated with institutions in the United States
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 26 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 56d4319f32ae57eb29e6ad28db47afb4...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', '693cf268f4362d58addddf862ee323a6...', '6a24c05c10a9620eed0e3a57e30feb56...', '5bbbcbce5370a0a8daabe594ccc505f5...', '938ec004921799301b144a6014492046...']
+
+CACHE HIT! (lookup: 0.05ms)
+   Retrieved from cache key: 56d4319f32ae57eb29e6ad28db47afb4...
+
+Cypher Query:
+   MATCH (c1:Country) WHERE toLower(c1.name) CONTAINS toLower('United States') MATCH (i1:Institution)-[:IS_LOCATED_IN]->(ci1:City)-[:IS_CITY_IN]->(c1) MATCH (s1:Scholar)-[:AFFILIATED_WITH]->(i1) RETURN s1.fullName
+
+Answer:
+   I do not have enough information to answer this question.
+
+Cache Statistics:
+   • Hits: 27 | Misses: 17 | Hit Rate: 61.4%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
+
+======================================================================
+QUERY EXECUTION
+======================================================================
+Question: Which scholars won prizes in Physics and were affiliated with University of Cambridge?
+rag_instance ID: 5614923328
+cache object ID: 5614920976
+Current cache state: 13 entries, 27 hits, 17 misses
+----------------------------------------------------------------------
+Cache key for this query: 37aa312da26ea1c1d6517b5bd298f176...
+Keys currently in cache: ['37aa312da26ea1c1d6517b5bd298f176...', '693cf268f4362d58addddf862ee323a6...', '6a24c05c10a9620eed0e3a57e30feb56...', '5bbbcbce5370a0a8daabe594ccc505f5...', '938ec004921799301b144a6014492046...']
+
+CACHE HIT! (lookup: 0.05ms)
+   Retrieved from cache key: 37aa312da26ea1c1d6517b5bd298f176...
+
+Cypher Query:
+   MATCH (s1:Scholar)-[r1:WON]->(p1:Prize), (s1)-[r2:AFFILIATED_WITH]->(i1:Institution) WHERE toLower(p1.category) CONTAINS 'physics' AND toLower(i1.name) CONTAINS 'university of cambridge' RETURN s1.fullName
+
+Answer:
+   The scholars who won prizes in Physics and were affiliated with the University of Cambridge are: Antony Hewish, Brian David Josephson, Charles Thomson Rees Wilson, Didier Queloz, Joseph John Thomson, ...
+
+Cache Statistics:
+   • Hits: 28 | Misses: 17 | Hit Rate: 62.2%
+   • Cache Size: 13/100
+
+Performance: ~0ms (vs ~7,963ms without cache)
+   Speedup: ~7963x faster!
+======================================================================
+
