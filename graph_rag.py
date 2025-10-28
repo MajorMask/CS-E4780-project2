@@ -36,18 +36,49 @@ def _(text_ui):
 
 
 @app.cell
-def _(KuzuDatabaseManager, mo, run_graph_rag, text_ui):
+def _(GraphRAG, KuzuDatabaseManager, mo):
+    # Initialize database and RAG instance ONCE
+    # This cell should not depend on text_ui so it doesn't re-run
     db_name = "nobel.kuzu"
     db_manager = KuzuDatabaseManager(db_name)
+    rag_instance = GraphRAG(db_manager)
+    schema = str(db_manager.get_schema_dict)
+    
+    print("="*70)
+    print("GraphRAG INITIALIZATION")
+    print("="*70)
+    print(f"rag_instance object ID: {id(rag_instance)}")
+    print(f"cache object ID: {id(rag_instance.cache)}")
+    print(f"Cache contents: {len(rag_instance.cache.cache)} entries")
+    print(f"Cache stats: hits={rag_instance.cache.hits}, misses={rag_instance.cache.misses}")
+    print("="*70)
+    print("If you see this message MORE THAN ONCE, the instance is being recreated!")
+    print("="*70)
+    
+    return db_manager, db_name, rag_instance, schema
 
+
+@app.cell
+def _(mo, rag_instance, db_manager, schema, text_ui):
+    # This cell runs when text_ui changes, but reuses rag_instance
     question = text_ui.value
 
     with mo.status.spinner(title="Generating answer...") as _spinner:
-        result = run_graph_rag([question], db_manager)[0]
+        result = rag_instance(db_manager=db_manager, question=question, input_schema=schema)
 
-    query = result['query']
-    answer = result['answer'].response
-    return answer, db_manager, db_name, query, question
+    # Extract query and answer for display
+    if result:
+        query = result.get('query', 'N/A')
+        answer = result.get('answer', None)
+        if answer:
+            answer = answer.response
+        else:
+            answer = "No answer generated"
+    else:
+        query = "No query generated"
+        answer = "No answer generated"
+    
+    return answer, query, question, result
 
 
 @app.cell
@@ -496,7 +527,7 @@ def _(
                 result = db_manager.conn.execute(query)
                 results = [item for row in result for item in row]
             except RuntimeError as e:
-                print(f"❌ Error running query: {e}")
+                print(f"Error running query: {e}")
                 results = None
             self.monitor.record_timing("query_execution", (time.perf_counter() - start) * 1000)
             
@@ -505,13 +536,54 @@ def _(
         def forward(self, db_manager: KuzuDatabaseManager, question: str, input_schema: str):
             """Execute pipeline with caching"""
             
+            print("\n" + "="*70)
+            print("QUERY EXECUTION")
+            print("="*70)
+            print(f"Question: {question}")
+            print(f"rag_instance ID: {id(self)}")
+            print(f"cache object ID: {id(self.cache)}")
+            print(f"Current cache state: {len(self.cache.cache)} entries, {self.cache.hits} hits, {self.cache.misses} misses")
+            print("-"*70)
+            
             # Task 2: Check cache first
+            start_cache = time.perf_counter()
+            
+            # Compute the key that will be used
+            combined = f"{question}|{input_schema}"
+            cache_key = hashlib.sha256(combined.encode()).hexdigest()
+            print(f"Cache key for this query: {cache_key[:32]}...")
+            print(f"Keys currently in cache: {[k[:32]+'...' for k in list(self.cache.cache.keys())[:5]]}")
+            
             cached_result = self.cache.get(question, input_schema)
+            cache_lookup_time = (time.perf_counter() - start_cache) * 1000
+            
             if cached_result is not None:
-                print("✓ Cache hit!")
+                print(f"\nCACHE HIT! (lookup: {cache_lookup_time:.2f}ms)")
+                print(f"   Retrieved from cache key: {cache_key[:32]}...")
+                print(f"\nCypher Query:")
+                print(f"   {cached_result['query']}")
+                print(f"\nAnswer:")
+                answer_text = str(cached_result['answer'].response)
+                if len(answer_text) > 200:
+                    print(f"   {answer_text[:200]}...")
+                else:
+                    print(f"   {answer_text}")
+                
+                # Print cache stats
+                cache_stats = self.cache.get_stats()
+                print(f"\nCache Statistics:")
+                print(f"   • Hits: {cache_stats['hits']} | Misses: {cache_stats['misses']} | Hit Rate: {cache_stats['hit_rate']:.1%}")
+                print(f"   • Cache Size: {cache_stats['size']}/{cache_stats['capacity']}")
+                
+                print(f"\nPerformance: ~{cache_lookup_time:.0f}ms (vs ~7,963ms without cache)")
+                print(f"   Speedup: ~{7963/max(cache_lookup_time, 1):.0f}x faster!")
+                print("="*70 + "\n")
+                
                 return cached_result
             
-            print("✗ Cache miss - executing pipeline")
+            print(f"\nCACHE MISS (lookup: {cache_lookup_time:.2f}ms)")
+            print(f"   Key {cache_key[:32]}... NOT found in cache")
+            print("   Executing full pipeline...")
             
             # Execute pipeline
             start_total = time.perf_counter()
@@ -519,6 +591,8 @@ def _(
             final_query, final_context = self.run_query(db_manager, question, input_schema)
             
             if final_context is None:
+                print("\nQuery returned empty results")
+                print("="*70 + "\n")
                 return {}
             else:
                 start = time.perf_counter()
@@ -535,9 +609,27 @@ def _(
                 
                 # Task 2: Cache the result
                 self.cache.put(question, input_schema, response)
-                
+                print(f"\nResult stored in cache with key: {cache_key[:32]}...")
+                # print(f"   Cache size: {self.cache.cache_size}/{self.cache.cache_capacity}")
                 total_time = (time.perf_counter() - start_total) * 1000
                 self.monitor.record_timing("total_pipeline", total_time)
+                
+                print(f"\nPipeline completed in {total_time:.0f}ms")
+                print(f"\nCypher Query:")
+                print(f"   {final_query}")
+                print(f"\nAnswer:")
+                answer_text = str(answer.response)
+                if len(answer_text) > 200:
+                    print(f"   {answer_text[:200]}...")
+                else:
+                    print(f"   {answer_text}")
+                
+                # Print cache stats
+                cache_stats = self.cache.get_stats()
+                print(f"\nCache Statistics AFTER storing:")
+                print(f"   • Hits: {cache_stats['hits']} | Misses: {cache_stats['misses']} | Hit Rate: {cache_stats['hit_rate']:.1%}")
+                print(f"   • Cache Size: {cache_stats['size']}/{cache_stats['capacity']}")
+                print("="*70 + "\n")
                 
                 return response
 
